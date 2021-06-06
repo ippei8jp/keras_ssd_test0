@@ -1,0 +1,113 @@
+diff --git a/ssd.py b/ssd.py
+index 656cd83..8908589 100644
+--- a/ssd.py
++++ b/ssd.py
+@@ -1,19 +1,17 @@
+ """Keras implementation of SSD."""
+ 
+-import keras.backend as K
+-from keras.layers import Activation
+-#from keras.layers import AtrousConvolution2D
+-from keras.layers import Convolution2D
+-from keras.layers import Dense
+-from keras.layers import Flatten
+-from keras.layers import GlobalAveragePooling2D
+-from keras.layers import Input
+-from keras.layers import MaxPooling2D
+-#from keras.layers import merge
+-from keras.layers.merge import concatenate
+-from keras.layers import Reshape
+-from keras.layers import ZeroPadding2D
+-from keras.models import Model
++import tensorflow.keras.backend as K
++from tensorflow.keras.layers import Activation
++from tensorflow.keras.layers import Convolution2D
++from tensorflow.keras.layers import Dense
++from tensorflow.keras.layers import Flatten
++from tensorflow.keras.layers import GlobalAveragePooling2D
++from tensorflow.keras.layers import Input
++from tensorflow.keras.layers import MaxPooling2D
++from tensorflow.keras.layers import concatenate
++from tensorflow.keras.layers import Reshape
++from tensorflow.keras.layers import ZeroPadding2D
++from tensorflow.keras.models import Model
+ 
+ from ssd_layers import Normalize
+ from ssd_layers import PriorBox
+diff --git a/ssd_layers.py b/ssd_layers.py
+index 41ee510..fb584a4 100644
+--- a/ssd_layers.py
++++ b/ssd_layers.py
+@@ -1,8 +1,8 @@
+ """Some special pupropse layers for SSD."""
+ 
+-import keras.backend as K
+-from keras.engine.topology import InputSpec
+-from keras.engine.topology import Layer
++import tensorflow.keras.backend as K
++from tensorflow.python.keras.engine.input_spec import InputSpec
++from tensorflow.python.keras.engine.base_layer import Layer
+ import numpy as np
+ import tensorflow as tf
+ 
+diff --git a/testing_utils/videotest.py b/testing_utils/videotest.py
+index 7b2ff4f..e295c65 100644
+--- a/testing_utils/videotest.py
++++ b/testing_utils/videotest.py
+@@ -1,15 +1,13 @@
+ """ A class for testing a SSD model on a video file or webcam """
+ 
+ import cv2
+-import keras
+-from keras.applications.imagenet_utils import preprocess_input
+-# from keras.backend.tensorflow_backend import set_session
+-from keras.models import Model
+-from keras.preprocessing import image 
++import tensorflow.keras as keras
++from tensorflow.keras.applications.imagenet_utils import preprocess_input
++from tensorflow.keras.models import Model
++from tensorflow.keras.preprocessing import image 
+ import pickle
+ import numpy as np
+ from random import shuffle
+-# from scipy.misc import imread, imresize
+ from imageio import imread
+ from timeit import default_timer as timer
+ 
+@@ -179,6 +177,7 @@ class VideoTest(object):
+             cv2.putText(to_draw, fps, (3,10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0,0,0), 1)
+             
+             cv2.imshow("SSD result", to_draw)
+-            cv2.waitKey(10)
+-            
+-        
++            key = cv2.waitKey(1)
++            if key == 27:
++                # ESCキー
++                break
+diff --git a/testing_utils/videotest_example.py b/testing_utils/videotest_example.py
+index 27ec148..55ba0a4 100644
+--- a/testing_utils/videotest_example.py
++++ b/testing_utils/videotest_example.py
+@@ -2,7 +2,7 @@ import os
+ # GPU不使用を設定
+ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+ 
+-import keras
++import tensorflow.keras as keras
+ import pickle
+ from videotest import VideoTest
+ 
+@@ -41,10 +41,10 @@ NUM_CLASSES = len(class_names)
+ model = SSD(input_shape, num_classes=NUM_CLASSES)
+ 
+ # Change this path if you want to use your own trained weights
+-model.load_weights('../../weights_SSD300.hdf5') 
++model.load_weights('../../weights/weights_SSD300.hdf5') 
+         
+ vid_test = VideoTest(class_names, model, input_shape)
+ 
+ # To test on webcam 0, remove the parameter (or change it to another number
+ # to test on that webcam)
+-vid_test.run('../../testvideo3.mp4')
++vid_test.run('../../images/testvideo3.mp4')
